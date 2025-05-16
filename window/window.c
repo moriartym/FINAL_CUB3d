@@ -30,7 +30,8 @@ int create_visual(t_cub *cube)
     t_var data = {0};
 
     init_all(&data, cube);
-    create_image_buffer(&data);    
+    create_image_buffer(&data);
+    load_textures(&data);  
     mlx_loop_hook(data.mlx, render, &data);
     mlx_hook(data.win, DestroyNotify, StructureNotifyMask, &close_window, &data);
     mlx_hook(data.win, KeyPress, KeyPressMask, &handle_keypress, &data);

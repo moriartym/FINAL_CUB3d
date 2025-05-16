@@ -13,15 +13,15 @@ void load_single_gif_frame(t_var *data, t_img *img, const char *path)
 
 void load_enemy_gifs(t_var *data)
 {
-    load_single_gif_frame(data, &data->gif.zero,  "textures/hangy-0.xpm");
-    load_single_gif_frame(data, &data->gif.one,   "textures/hangy-1.xpm");
-    load_single_gif_frame(data, &data->gif.two,   "textures/hangy-2.xpm");
-    load_single_gif_frame(data, &data->gif.three, "textures/hangy-3.xpm");
-    load_single_gif_frame(data, &data->gif.four,  "textures/hangy-4.xpm");
-    load_single_gif_frame(data, &data->gif.five,  "textures/hangy-5.xpm");
-    load_single_gif_frame(data, &data->gif.six,   "textures/hangy-6.xpm");
-    load_single_gif_frame(data, &data->gif.seven, "textures/hangy-7.xpm");
-    load_single_gif_frame(data, &data->gif.eight, "textures/hangy-8.xpm");
+    load_single_gif_frame(data, &data->gif.zero,  "textures/enemy/hangy-0.xpm");
+    load_single_gif_frame(data, &data->gif.one,   "textures/enemy/hangy-1.xpm");
+    load_single_gif_frame(data, &data->gif.two,   "textures/enemy/hangy-2.xpm");
+    load_single_gif_frame(data, &data->gif.three, "textures/enemy/hangy-3.xpm");
+    load_single_gif_frame(data, &data->gif.four,  "textures/enemy/hangy-4.xpm");
+    load_single_gif_frame(data, &data->gif.five,  "textures/enemy/hangy-5.xpm");
+    load_single_gif_frame(data, &data->gif.six,   "textures/enemy/hangy-6.xpm");
+    load_single_gif_frame(data, &data->gif.seven, "textures/enemy/hangy-7.xpm");
+    load_single_gif_frame(data, &data->gif.eight, "textures/enemy/hangy-8.xpm");
 }
 
 void forbidden_enemy(t_var *data, t_bfs *bfs)

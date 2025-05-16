@@ -35,21 +35,21 @@ int	verify_id(t_map *map, char **arr, int line)
 		return (0);
 	else if (ft_arrlen(arr) != 2)
 		return (element_err(line), 1);
-	else if (ft_strcmp(arr[0], "NO") == 0 && !map->north.filename)
-		id = set_id(&map->north, NORTH);
-	else if (ft_strcmp(arr[0], "EA") == 0 && !map->east.filename)
-		id = set_id(&map->east, EAST);
-	else if (ft_strcmp(arr[0], "SO") == 0 && !map->south.filename)
-		id = set_id(&map->south, SOUTH);
-	else if (ft_strcmp(arr[0], "WE") == 0 && !map->west.filename)
-		id = set_id(&map->west, WEST);
-	else if (ft_strcmp(arr[0], "F") == 0 && !map->floor.filename && verify_rgb(arr[1]) == 0)
-		id = set_id(&map->floor, FLOOR);
-	else if (ft_strcmp(arr[0], "C") == 0 && !map->ceiling.filename && verify_rgb(arr[1]) == 0)
-		id = set_id(&map->ceiling, CEILING);
+	else if (ft_strcmp(arr[0], "NO") == 0 && !map->textures[NORTH].filename)
+		id = set_id(&map->textures[NORTH], NORTH);
+	else if (ft_strcmp(arr[0], "EA") == 0 && !map->textures[EAST].filename)
+		id = set_id(&map->textures[EAST], EAST);
+	else if (ft_strcmp(arr[0], "SO") == 0 && !map->textures[SOUTH].filename)
+		id = set_id(&map->textures[SOUTH], SOUTH);
+	else if (ft_strcmp(arr[0], "WE") == 0 && !map->textures[WEST].filename)
+		id = set_id(&map->textures[WEST], WEST);
+	else if (ft_strcmp(arr[0], "F") == 0 && !map->textures[FLOOR].filename && verify_rgb(arr[1]) == 0)
+		id = set_id(&map->textures[FLOOR], FLOOR);
+	else if (ft_strcmp(arr[0], "C") == 0 && !map->textures[CEILING].filename && verify_rgb(arr[1]) == 0)
+		id = set_id(&map->textures[CEILING], CEILING);
 	else
 		return (element_err(line), 1);
-	id->filename = ft_strdup(arr[1]);
+	id->filename = ft_substr(arr[1], 0, ft_strlen(arr[1]) - (arr[1][ft_strlen(arr[1]) - 1] == '\n'));
 	if (!id->filename)
 		return (ft_error_return("malloc failed"), 1);
 	map->elements_set++;
@@ -76,7 +76,7 @@ int	verify_rgb(char *value)
 	return (0);
 }
 
-t_id	*set_id(t_id *id, direction value)
+t_id	*set_id(t_id *id, textures value)
 {
 	id->direction = value;
 	return (id);

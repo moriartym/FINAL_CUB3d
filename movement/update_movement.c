@@ -26,45 +26,79 @@ void movement_init(t_var *data, t_movestat *movestat)
     movestat->ipy_sub_yo = (data->player.py - movestat->yo) / TILE_SIZE;
 }
 
+bool is_valid_movement(t_var *data, char tile, float nextX, float nextY)
+{
+    t_door *cur;
+    float margin = 5.0;
+
+    if (tile == '0' || tile == '8' || tile == DOORH_OPEN || tile == DOORV_OPEN)
+        return (true);
+    else if (tile == '1')
+        return (false);
+    
+    cur = data->map.doors;
+    while (cur)
+    {
+        if (*cur->status == tile)
+        {
+            if (nextX + margin > cur->xStart && nextX - margin < cur->xEnd &&
+                nextY + margin > cur->yStart && nextY - margin < cur->yEnd)
+                return (false);
+        }
+        cur = cur->next;
+    }
+    return (true);
+}
+
 void movement_ws(t_var *data, t_movestat *movestat)
 {
+    float nextX;
+    float nextY;
     if (data->move.move_w)
     {
-        if (data->map.arr[movestat->ipy][movestat->ipx_add_xo] == '0' || data->map.arr[movestat->ipy][movestat->ipx_add_xo] == '3' || data->map.arr[movestat->ipy][movestat->ipx_add_xo] == '8')
+        nextX = data->player.px + data->player.pdx;
+        nextY = data->player.py + data->player.pdy;
+        if (is_valid_movement(data, data->map.arr[movestat->ipy][movestat->ipx_add_xo], nextX, data->player.py))
             data->player.px += data->player.pdx;
-        if (data->map.arr[movestat->ipy_add_yo][movestat->ipx] == '0' || data->map.arr[movestat->ipy_add_yo][movestat->ipx] == '3' || data->map.arr[movestat->ipy_add_yo][movestat->ipx] == '8')
+        if (is_valid_movement(data, data->map.arr[movestat->ipy_add_yo][movestat->ipx], data->player.px, nextY))
             data->player.py += data->player.pdy;       
     }
     if (data->move.move_s)
     {
-        if (data->map.arr[movestat->ipy][movestat->ipx_sub_xo] == '0' || data->map.arr[movestat->ipy][movestat->ipx_sub_xo] == '3' || data->map.arr[movestat->ipy][movestat->ipx_sub_xo] == '8')
+        nextX = data->player.px - data->player.pdx;
+        nextY = data->player.py - data->player.pdy;
+        if (is_valid_movement(data, data->map.arr[movestat->ipy][movestat->ipx_sub_xo], nextX, data->player.py))
             data->player.px -= data->player.pdx;
-        if (data->map.arr[movestat->ipy_sub_yo][movestat->ipx] == '0' || data->map.arr[movestat->ipy_sub_yo][movestat->ipx] == '3' || data->map.arr[movestat->ipy_sub_yo][movestat->ipx] == '8')
+        if (is_valid_movement(data, data->map.arr[movestat->ipy_sub_yo][movestat->ipx], data->player.px, nextY))
             data->player.py -= data->player.pdy;    
     }
 }
 
-void movement_da(t_var *data, t_movestat *movestat)
+void movement_da(t_var *data, t_movestat *movestat, int strafe_ipx, int strafe_ipy)
 {
-    int strafe_ipx;
-    int strafe_ipy;
+    float nextX;
+    float nextY;
 
     if (data->move.move_d)
     {   
         strafe_ipx = (data->player.px - movestat->yo) / TILE_SIZE;
         strafe_ipy = (data->player.py + movestat->xo) / TILE_SIZE;
-        if (data->map.arr[movestat->ipy][strafe_ipx] == '0' || data->map.arr[movestat->ipy][strafe_ipx] == '3' || data->map.arr[movestat->ipy][strafe_ipx] == '8')
+        nextX = data->player.px - data->player.pdy;
+        nextY = data->player.py + data->player.pdx;
+        if (is_valid_movement(data, data->map.arr[movestat->ipy][strafe_ipx], nextX, data->player.py))
             data->player.px -= data->player.pdy;
-        if (data->map.arr[strafe_ipy][movestat->ipx] == '0' || data->map.arr[strafe_ipy][movestat->ipx] == '3' || data->map.arr[strafe_ipy][movestat->ipx] == '8')
+        if (is_valid_movement(data, data->map.arr[strafe_ipy][movestat->ipx], data->player.px, nextY))
             data->player.py += data->player.pdx;
     }
     if (data->move.move_a)
     {
         strafe_ipx = (data->player.px + movestat->yo) / TILE_SIZE;
         strafe_ipy = (data->player.py - movestat->xo) / TILE_SIZE;
-        if (data->map.arr[movestat->ipy][strafe_ipx] == '0' || data->map.arr[movestat->ipy][strafe_ipx] == '3' || data->map.arr[movestat->ipy][strafe_ipx] == '8')
+        nextX = data->player.px + data->player.pdy;
+        nextY = data->player.py - data->player.pdx;
+        if (is_valid_movement(data, data->map.arr[movestat->ipy][strafe_ipx], nextX, data->player.py))
             data->player.px += data->player.pdy;
-        if (data->map.arr[strafe_ipy][movestat->ipx] == '0' || data->map.arr[strafe_ipy][movestat->ipx] == '3' || data->map.arr[movestat->ipy][strafe_ipx] == '8')
+        if (is_valid_movement(data, data->map.arr[strafe_ipy][movestat->ipx], data->player.px, nextY))
             data->player.py -= data->player.pdx;
     }
 }
@@ -78,7 +112,6 @@ void win(t_var *data)
     }
 }
 
-
 void update_movement(t_var *data)
 {
     t_movestat movestat;
@@ -86,6 +119,6 @@ void update_movement(t_var *data)
     movestat = (t_movestat){0};
     movement_init(data, &movestat);
     movement_ws(data, &movestat);
-    movement_da(data, &movestat);
+    movement_da(data, &movestat, 0, 0);
     win(data);
 }

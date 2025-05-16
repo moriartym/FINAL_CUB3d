@@ -53,10 +53,10 @@ void cast_rays(t_var *data, t_ray *ray)
     line = (t_line){0};
     rayhit = (t_rayhit){0};
     tile_size = data->minimap.tile_size;
-    if (ray->disH < ray->disV)
-        ray->side = 1; 
-    else
+    if (ray->disH > ray->disV)
     {
+        ray->sideH = ray->sideV;
+        ray->hitTypeH = ray->hitTypeV;
         ray->disH = ray->disV;
         ray->rx = ray->vx;
         ray->ry = ray->vy;
@@ -78,6 +78,8 @@ void draw_rays(t_var *data)
     ray.r = 0;
     while (ray.r < NUM_RAYS)
     {
+        ray.hitTypeV = '0';
+        ray.hitTypeH = '0';
         cast_vertical(data, &ray);
         cast_horizontal(data, &ray);
         data->zbuffer[ray.r] = fmin(ray.disH, ray.disV);

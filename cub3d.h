@@ -52,6 +52,7 @@
 #define FLOOR_COLOR 0x222222
 
 #define TILE_SIZE  32
+#define TILE_SIZE_TEXTURE  64
 
 #define PI  3.14159265359
 #define P2  (PI / 2)
@@ -70,8 +71,11 @@
 #define SPRITE_SIZE_MAP 2
 #define ENEMY_COLOR 0xFFFF00 // Yellow
 
-
-
+#define DOORH_CLOSE	'2'
+#define DOORH_OPEN '3'
+#define DOORV_CLOSE '4'
+#define DOORV_OPEN '5'
+#define DOORWIDTH 4
 
 /*------------------------------STRUCT------------------------------*/
 
@@ -79,34 +83,67 @@ typedef struct {
     int x, y;
 } Point;
 
-typedef enum	direction
+typedef enum	textures
 {
-	NOTHING,
 	NORTH,
 	EAST,
 	SOUTH,
 	WEST,
 	FLOOR,
-	CEILING
-}				direction;
+	CEILING,
+	DOOR_O,
+	DOOR_C,
+	DOOR_S
+}				textures;
+
+typedef struct s_img
+{
+    void *img;
+    char *addr;
+    int width;
+    int height;
+    int bits_per_pixel;
+    int line_length;
+    int endian;
+}               t_img;
 
 typedef struct	s_identifier
 {
-	direction	direction;
+	textures	direction;
 	char		*filename;			// need to be freed
+	t_img		attr;
+	int			color;
 }				t_id;
+
+typedef struct s_tex
+{
+	int lineH;
+	int lineOff;
+	float tx;
+	float ty;
+	float ty_off;
+	float ty_step;
+	int	tile_sz;
+}			t_tex;
+
+typedef struct s_door
+{
+	int		idX;
+	int		idY;
+	char	*status;
+	float xStart;
+	float xEnd;
+	float yStart;
+	float yEnd;
+	struct s_door *next;
+}			t_door;
 
 typedef struct  s_map
 {
 	char	*name;
 	
 	int		elements_set;
-	t_id	north;
-	t_id	east;
-	t_id	south;
-	t_id	west;
-	t_id	floor;
-	t_id	ceiling;
+	t_id 	textures[9];
 
 	int		content_start;
     int		height;
@@ -114,6 +151,8 @@ typedef struct  s_map
     int		max_length;
     char	**arr;
 
+	t_door	*doors;
+    
 	int xpos;
 	int ypos;
 }				t_map;
@@ -122,16 +161,6 @@ typedef struct	cub3d
 {
 	t_map	map;
 }				t_cub;
-
-typedef struct s_img {
-    void *img;
-    char *addr;
-    int width;
-    int height;
-    int bits_per_pixel;
-    int line_length;
-    int endian;
-} t_img;
 
 
 typedef struct s_play {
@@ -248,7 +277,8 @@ typedef struct s_ray {
 	int my;
 	int mp;
 	int dof;
-	int side; 
+	int sideH;
+	int sideV;
 	float vx;
 	float vy;
 	float rx;
@@ -259,6 +289,10 @@ typedef struct s_ray {
 	float disV;
 	float disH;
 	float tan;
+    char hitTypeH;
+	char hitTypeV;
+	float oriX;
+	float oriY;
 } t_ray;
 
 typedef struct s_edraw {
@@ -415,7 +449,7 @@ void    handle_error(char *err);
 int		extract_elements(t_map *map, int fd);
 int		verify_id(t_map *map, char **arr, int line);
 int		verify_rgb(char *value);
-t_id	*set_id(t_id *id, direction value);
+t_id	*set_id(t_id *id, textures value);
 
 // from extract_content.c
 int		extract_content(t_map *map, int fd);
@@ -504,7 +538,7 @@ int get_front_tile_y(t_var *data);
 void update_movement(t_var *data);
 void movement_init(t_var *data, t_movestat *movestat);
 void movement_ws(t_var *data, t_movestat *movestat);
-void movement_da(t_var *data, t_movestat *movestat);
+void movement_da(t_var *data, t_movestat *movestat, int strafe_ipx, int strafe_ipy);
 void win(t_var *data);
 
 //from movement.c
@@ -523,8 +557,11 @@ void draw_rays(t_var *data);
 void create_rayhit(t_var *data, t_ray *ray, t_rayhit *rayhit, int tile_size);
 
 // from raycast_3d.c
-void draw_3d_helper(t_var *data, t_ray *ray, int lineOff, int lineH);
+int get_lineH(float dist, float pa, float ra);
+void    init_tile(t_var *data, t_ray *ray, t_tex *tile);
 void draw_3d(t_var *data, t_ray *ray);
+void draw_3d_helper(t_var *data, t_ray *ray, t_tex *tile);
+void    draw_wall_strip(t_img *img, int x, int y, int color);
 
 // from raycast_helper.c
 void cast_vertical (t_var* data, t_ray* ray);
@@ -532,6 +569,24 @@ void vertical_dof(t_var* data, t_ray* ray);
 void cast_horizontal (t_var *data, t_ray * ray);
 void horizontal_dof(t_var* data, t_ray* ray);
 bool is_wall(t_map *map, int x, int y);
+
+// from textures.c
+void    load_textures(t_var *data);
+int extract_img(void *mlx, t_img *attr, char *filename);
+int    extract_rgb(int *color, char *rgb);
+t_img *get_texture(t_var *data, t_ray *ray);
+int    get_color(int x, int y, t_img *tex);
+
+// from doorpos.c
+void translate_ray(t_ray *ray, int side, char c);
+bool is_door_side(t_door *cur, t_ray *ray, int side, char c);
+bool doorv_from_side_check(t_ray *ray, t_door *cur, int side, char c);
+bool doorh_from_side_check(t_ray *ray, t_door *cur, int side, char c);
+bool is_door(t_map *map, t_ray *ray, int side);
+
+// from dooralpha.c
+int check_door_alpha(t_var *data, t_ray ray, int side);
+int check_alpha(t_ray ray, t_tex tile, t_img *tex);
 
 /*------------------------------ENEMY------------------------------*/
 
@@ -578,8 +633,6 @@ void screen_rgba(t_var *data, t_edraw *draw);
 void screen_draw_helper(t_var *data, t_edraw *draw);
 void screen_draw(t_var *data, t_edraw *draw);
 void draw_sprites(t_var *data);
-
-
 
 
 #endif

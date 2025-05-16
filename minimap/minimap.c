@@ -28,9 +28,9 @@ void draw_map(t_var *data, int x, int y, int draw_x, int draw_y)
         color = EMPTY_COLOR;
     else if (tile == '1')
         color = WALL_COLOR;
-    else if (tile == '2')
+    else if (tile == DOORH_CLOSE || tile == DOORV_CLOSE)
         color = DOOR_COLOR;
-    else if (tile == '3')
+    else if (tile == DOORH_OPEN || tile == DOORV_OPEN)
         color = DOOR_OPEN_COLOR;
     else if (tile == '8')
         color = WIN_COLOR;
