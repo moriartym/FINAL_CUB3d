@@ -56,8 +56,7 @@ void ebfs_four_helper(char **map,t_enemy_bfs *bfs)
 
         if (bfs->nx >= 0 && bfs->ny >= 0 &&
             bfs->nx < bfs->width && bfs->ny < bfs->height &&
-            !bfs->visited[bfs->ny][bfs->nx] && (map[bfs->ny][bfs->nx] != '1'))
-            // !bfs->visited[bfs->ny][bfs->nx] && (map[bfs->ny][bfs->nx] == '0' || map[bfs->ny][bfs->nx] == DOORH_OPEN || map[bfs->ny][bfs->nx] == DOORV_OPEN))
+            !bfs->visited[bfs->ny][bfs->nx] && map[bfs->ny][bfs->nx] == '0')
         {
             bfs->queue_x[bfs->rear] = bfs->nx;
             bfs->queue_y[bfs->rear] = bfs->ny;

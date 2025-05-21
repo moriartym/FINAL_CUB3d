@@ -93,7 +93,8 @@ typedef enum	textures
 	CEILING,
 	DOOR_O,
 	DOOR_C,
-	DOOR_S
+	DOOR_S,
+    WIN
 }				textures;
 
 typedef struct s_img
@@ -143,7 +144,7 @@ typedef struct  s_map
 	char	*name;
 	
 	int		elements_set;
-	t_id 	textures[9];
+	t_id 	textures[10];
 
 	int		content_start;
     int		height;
@@ -433,6 +434,7 @@ typedef struct s_var {
 	struct timeval last_time;
 	t_minimap minimap;
 	t_sprite *sprites;
+    t_sprite winSprite;
 	float zbuffer[NUM_RAYS];
 	t_gif gif;
 	int current_anim_index;

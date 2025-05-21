@@ -28,7 +28,7 @@ int enemy_right(t_var *data, t_sprite *sp)
 {
     if ((sp->is_unstucking || sp->x < data->player.px))
     {
-        if (is_cell_valid(data, sp->spx_right, sp->spy))
+        if (is_cell_valid(data, sp->spx_right, sp->y))
         {
             if (!is_cell_valid(data, sp->spx_right, sp->spy_up) && is_cell_valid(data, sp->x, sp->y))
             {
@@ -78,12 +78,12 @@ int enemy_down(t_var *data, t_sprite *sp)
     {
         if (is_cell_valid(data, sp->x, sp->spy_down))
         {
-            if (!is_cell_valid(data, sp->spx_left, sp->spy_down) && is_cell_valid(data, sp->x, sp->spy))
+            if (!is_cell_valid(data, sp->spx_left, sp->spy_down) && is_cell_valid(data, sp->x, sp->y))
             {
                 sp->x += sp->lil_margin;
                 return (0);
             }
-            if (!is_cell_valid(data, sp->spx_right, sp->spy_down) && is_cell_valid(data, sp->x, sp->spy))
+            if (!is_cell_valid(data, sp->spx_right, sp->spy_down) && is_cell_valid(data, sp->x, sp->y))
             {
                 sp->x -= sp->lil_margin;
                 return (0);

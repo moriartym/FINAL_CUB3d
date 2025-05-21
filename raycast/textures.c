@@ -17,6 +17,7 @@ void    load_textures(t_var *data)
         extract_rgb(&tex[i].color, tex[i].filename);
         i++;
     }
+    extract_img(data->mlx,&tex[WIN].attr, "./textures/tiles/sayuri.xpm");
     extract_img(data->mlx, &tex[DOOR_C].attr, "./textures/doors/door_close.xpm");
     extract_img(data->mlx, &tex[DOOR_O].attr, "./textures/doors/door_open.xpm");
     extract_rgb(&tex[DOOR_S].color, "242,185,179");
