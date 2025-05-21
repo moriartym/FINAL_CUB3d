@@ -333,6 +333,7 @@ typedef struct s_edraw {
     int color;
     int x;
     int y;
+    int isWin;
 } t_edraw;
 
 

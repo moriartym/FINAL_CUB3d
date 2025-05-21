@@ -17,10 +17,10 @@ void change_to_win(t_var *data, t_bfs *bfs, int index)
                 i++;
             if (i == index)
             {
-                y = (int)data->player.py / TILE_SIZE - 5;
-                x = (int)data->player.px / TILE_SIZE;
-                data->winSprite.spx = x;
-                data->winSprite.spy = y;
+                // y = (int)data->player.py / TILE_SIZE - 5;
+                // x = (int)data->player.px / TILE_SIZE - 1;
+                data->winSprite.x = x * TILE_SIZE + 0.5 * TILE_SIZE;
+                data->winSprite.y = y * TILE_SIZE + 0.5 * TILE_SIZE;
                 data->map.arr[y][x] = '8';
                 return ;
             }

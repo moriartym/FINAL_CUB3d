@@ -24,6 +24,8 @@ void select_frame(t_var *data, t_edraw *draw)
         draw->cur_img = &data->gif.eight;   
     else
         draw->cur_img = &data->gif.zero;
+    if (draw->isWin == 1)
+        draw->cur_img = &data->map.textures[WIN].attr;
 }
 
 void screen_rgba(t_var *data, t_edraw *draw)
@@ -109,4 +111,13 @@ void draw_sprites(t_var *data)
         screen_draw(data, &draw);
         i++;
     }
+    draw.isWin = 1;
+    if (enemy_size(data, &draw, &data->winSprite))
+    {
+        draw.isWin = 0;
+        return ;
+    }
+    select_frame(data, &draw);
+    screen_draw(data, &draw);
+    draw.isWin = 1;
 }
