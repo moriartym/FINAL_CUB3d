@@ -101,7 +101,7 @@ bool is_door(t_map *map, t_ray *ray, int side)
             if (is_door_side(cur, ray, side, c) == true ||
                 doorh_from_side_check(ray, cur, side, c) == true ||
                 doorv_from_side_check(ray, cur, side, c) == true)
-                return (true);
+                    return (true);
         }
         cur = cur->next;
     }

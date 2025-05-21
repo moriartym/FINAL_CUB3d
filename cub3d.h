@@ -238,10 +238,10 @@ typedef struct s_sprite {
     float lil_margin;
     int spx;
     int spy;
-    int spx_left;
-    int spx_right;
-    int spy_up;
-    int spy_down;
+    float spx_left;
+    float spx_right;
+    float spy_up;
+    float spy_down;
 	int is_unstucking;
 } t_sprite;
 
@@ -293,6 +293,7 @@ typedef struct s_ray {
 	char hitTypeV;
 	float oriX;
 	float oriY;
+    int cur_tile;
 } t_ray;
 
 typedef struct s_edraw {
@@ -547,6 +548,7 @@ int handle_keyrelease(int keysym, t_var *data);
 int handle_mouse_move(int x, int y, t_var *data);
 float normalize_radians(float angle);
 double get_delta_time(t_var *data);
+bool is_valid_movement(t_var *data, char tile, float nextX, float nextY);
 
 /*------------------------------RAYCAST------------------------------*/
 
@@ -568,7 +570,7 @@ void cast_vertical (t_var* data, t_ray* ray);
 void vertical_dof(t_var* data, t_ray* ray);
 void cast_horizontal (t_var *data, t_ray * ray);
 void horizontal_dof(t_var* data, t_ray* ray);
-bool is_wall(t_map *map, int x, int y);
+bool is_wall(t_map *map, int x, int y, int notwall);
 
 // from textures.c
 void    load_textures(t_var *data);
@@ -592,7 +594,7 @@ int check_alpha(t_ray ray, t_tex tile, t_img *tex);
 
 // from enemy_sprites.c
 int is_player_caught(t_sprite *sp, t_play *player, float radius);
-bool is_cell_valid(t_var *data, int x, int y);
+bool is_cell_valid(t_var *data, float x, float y);
 void resolve_enemy_dist(t_var *data, t_sprite *sp, t_sprite *other);
 void resolve_enemy_collisions(t_var *data, t_sprite *sp);
 void move_enemy_towards_player(t_var *data, t_sprite *sp);
